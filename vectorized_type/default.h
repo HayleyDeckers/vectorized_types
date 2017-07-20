@@ -3,7 +3,10 @@
 
 #include "array_wrapper.hpp"
 #include <cmath>
+#include <stdlib.h>
+#include <new>
 
+namespace vec{
 template<typename T>
 //By default our 'SIMD' version of T is just T.
 struct preffered_vector_type{
@@ -35,6 +38,22 @@ public:
   //array indexing
   const T operator[](std::size_t i) const {return mVal[i];}
   // T& operator[](std::size_t i){return mVal[i];}
+  static void* operator new(std::size_t sz) {
+   void *p = aligned_alloc(alignof(Simd), sz);
+   if(!p){
+     throw std::bad_alloc();
+   }
+   return p;
+  }
+  static void* operator new[](std::size_t sz) {
+   return vectorized_type::operator new(sz);
+  }
+  void operator delete(void *p) {
+   free(p);
+  }
+  void operator delete[](void *p) {
+   vectorized_type::operator delete(p);
+  }
 
   //increment
   vectorized_type& operator++(){
@@ -79,7 +98,7 @@ public:
   }
   //addition
   // friends defined inside class body are inline and are hidden from non-ADL lookup
- friend vectorized_type operator+(const vectorized_type lhs,        // passing lhs by value helps optimize chained a+b+c
+ inline friend vectorized_type operator+(const vectorized_type lhs,        // passing lhs by value helps optimize chained a+b+c
                     const vectorized_type rhs) // otherwise, both parameters may be const references
  {
   //  std::cout << "vectorized" << std::endl;
@@ -87,7 +106,7 @@ public:
  }
 
  //subtraction
-friend vectorized_type operator-(const vectorized_type lhs, const vectorized_type rhs)
+inline friend vectorized_type operator-(const vectorized_type lhs, const vectorized_type rhs)
 {
   return lhs.mVal - rhs.mVal;
 }
@@ -185,6 +204,6 @@ template<typename T>
 inline auto pow(vectorized_type<T> base, vectorized_type<T> power){
   return base.pow(power);
 }
-
+}
 
 #endif

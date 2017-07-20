@@ -1,5 +1,5 @@
-#ifndef VECT_PREF_AVX_H
-#define VECT_PREF_AVX_H
+#ifndef VECT_PREF_SSE_H
+#define VECT_PREF_SSE_H
 
 template<>
 struct preffered_vector_type<float>{

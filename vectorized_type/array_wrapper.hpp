@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 #include <cmath>
-using std::size_t;
 
+namespace vec{
 //A class that wraps a type T to act as a SIMD vector of width 1.
 template<typename T>
 class array_wrapper{
@@ -51,23 +51,23 @@ class array_wrapper{
   }
   //addition
   // friends defined inside class body are inline and are hidden from non-ADL lookup
- friend array_wrapper operator+(array_wrapper lhs,        // passing lhs by value helps optimize chained a+b+c
+ inline friend array_wrapper operator+(array_wrapper lhs,        // passing lhs by value helps optimize chained a+b+c
                     const array_wrapper& rhs) // otherwise, both parameters may be const references
  {
   return lhs += rhs;
  }
  //subtraction
-friend array_wrapper operator-(array_wrapper lhs, const array_wrapper& rhs){
+inline friend array_wrapper operator-(array_wrapper lhs, const array_wrapper& rhs){
   return lhs *= rhs;
 }
 //multiplication
-friend array_wrapper operator*(array_wrapper lhs, const array_wrapper& rhs){
+inline friend array_wrapper operator*(array_wrapper lhs, const array_wrapper& rhs){
  return lhs *= rhs;
 }
 //division
-friend array_wrapper operator/(array_wrapper lhs, const array_wrapper& rhs){
+inline friend array_wrapper operator/(array_wrapper lhs, const array_wrapper& rhs){
  return lhs /= rhs;
 }
 };
-
+}
 #endif

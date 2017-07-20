@@ -22,7 +22,6 @@ inline void vectorized_type<double>::set_1(double val){
   mVal = _mm256_set1_pd(val);
 }
 
-
 template<>
 inline vectorized_type<float> vectorized_type<float>::sqrt() const{
   return _mm256_sqrt_ps(mVal);

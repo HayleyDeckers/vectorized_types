@@ -7,8 +7,8 @@
 #include <new>
 
 namespace vec{
+  //By default our 'SIMD' version of T is just T.
 template<typename T>
-//By default our 'SIMD' version of T is just T.
 struct preffered_vector_type{
   constexpr static int width = 1;
   using type = array_wrapper<T>; //By wrapping it with array_wrapper it behaves like a normal vector unit.
@@ -16,6 +16,7 @@ struct preffered_vector_type{
 
 template<typename T>
 class vectorized_type{
+  static_assert(std::is_arithmetic<T>::value, "Typevalue T should be an ahritmetic type");
   //The vectorized type, internally
   using Simd = typename preffered_vector_type<T>::type;
   Simd mVal;
@@ -33,7 +34,15 @@ public:
   vectorized_type() {}
   vectorized_type(T val) {set_1(val);}
   vectorized_type(Simd val) : mVal(val) {}
-
+  template<typename I>
+  static vectorized_type Gather(T const* data, I indices[Width]){
+    vectorized_type ret;
+    static_assert(std::is_integral<I>::value, "Integral valued indices required");
+    for(int i = 0; i < Width; i++){
+     ret.set(i, data[indices[i]]);
+    }
+    return ret;
+  }
   void set(int index, T val){ mVal[index] = val;}
   //array indexing
   const T operator[](std::size_t i) const {return mVal[i];}

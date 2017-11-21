@@ -1,6 +1,7 @@
 #ifndef VECT_PREF_AVX512_H
 #define VECT_PREF_AVX512_H
-
+#include "../default.h"
+namespace vec{
 template<>
 struct preffered_vector_type<float>{
   constexpr static int width = 16;
@@ -29,5 +30,6 @@ inline vectorized_type<float> vectorized_type<float>::sqrt() const{
 template<>
 inline vectorized_type<double> vectorized_type<double>::sqrt() const{
   return _mm512_sqrt_pd(mVal);
+}
 }
 #endif

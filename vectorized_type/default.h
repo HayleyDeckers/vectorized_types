@@ -33,9 +33,14 @@ public:
   }
   vectorized_type() {}
   vectorized_type(T val) {set_1(val);}
+  vectorized_type(const T* val) {
+    for(int i =0; i < Width; i++){
+      mVal[i] = val[i];
+    }
+  }
   vectorized_type(Simd val) : mVal(val) {}
   template<typename I>
-  static vectorized_type Gather(T const* data, I indices[Width]){
+  static vectorized_type Gather(T const* data, const I indices[Width]){
     vectorized_type ret;
     static_assert(std::is_integral<I>::value, "Integral valued indices required");
     for(int i = 0; i < Width; i++){
@@ -81,8 +86,6 @@ public:
     }
     return sum;
   }
-
-  //inline vectorized_type sqrt() const {return vec::sqrt(mVal);}
 
   vectorized_type& operator=(const vectorized_type& rhs){
     mVal = rhs.mVal;
@@ -178,41 +181,73 @@ inline vectorized_type pow(const vectorized_type& power) const{
   return ret;
 }
 
+inline vectorized_type abs() const{
+  vectorized_type ret;
+  for(int i = 0; i < Width; i++){
+    ret.set(i,std::abs(mVal[i]));
+  }
+  return ret;
+}
+
 };
 
 //basecase mathematical operators simply call std::function.
 //these can be specialized to support vectorized calls.
-using std::sqrt;
 template<typename T>
 inline auto sqrt(vectorized_type<T> val){
   return val.sqrt();
 }
 
-using std::log;
+template<typename T>
+inline auto sqrt(T val){
+  return std::sqrt(val);
+}
+
 template<typename T>
 inline auto log(vectorized_type<T> val){
   return val.log();
 }
-using std::sin;
+template<typename T>
+inline auto log(T val){
+  return std::log(val);
+}
+
 template<typename T>
 inline auto sin(vectorized_type<T> val){
   return val.sin();
 }
-using std::cos;
+template<typename T>
+inline auto sin(T val){
+  return std::sin(val);
+}
+
 template<typename T>
 inline auto cos(vectorized_type<T> val){
   return val.cos();
 }
-using std::tan;
+template<typename T>
+inline auto cos(T val){
+  return std::cos(val);
+}
+
 template<typename T>
 inline auto tan(vectorized_type<T> val){
   return val.tan();
+}
+template<typename T>
+inline auto tan(T val){
+  return std::tan(val);
 }
 
 template<typename T>
 inline auto pow(vectorized_type<T> base, vectorized_type<T> power){
   return base.pow(power);
 }
+template<typename T>
+inline auto pow(T val, T power){
+  return std::pow(val, power);
+}
+
 }
 
 #endif

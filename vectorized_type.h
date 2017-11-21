@@ -4,7 +4,6 @@
 #include "vectorized_type/default.h"
 #include <immintrin.h>
 
-namespace vec{
 #ifdef __AVX512F__
 #include "vectorized_type/preferences/avx512.h"
 #elif __AVX__
@@ -12,6 +11,6 @@ namespace vec{
 #elif __SSE__
 #include "vectorized_type/preferences/sse.h"
 #endif
-}
+
 
 #endif

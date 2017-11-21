@@ -21,7 +21,7 @@ using simd_t = vectorized_type<single_t>;
 
 //A simple function that computes the lenght of 3d vectors.
 single_t vectorized_calculation(simd_t *__restrict__ x, simd_t *__restrict__ y, simd_t *__restrict__ z, int len){
-  simd_t sum = 0;
+  simd_t sum = 0.0;
   #pragma omp declare reduction(+:simd_t: omp_out = omp_out+omp_in) initializer(omp_priv = 0)
   #pragma omp parallel for reduction(+:sum) schedule(static)
   for(int i = 0; i < len; i++){

@@ -23,7 +23,7 @@ using index_t = int32_t;
 
 //A simple function that computes the lenght of 3d vectors.
 single_t vectorized_calculation(single_t *__restrict__ x, single_t *__restrict__ y, single_t *__restrict__ z, index_t *__restrict__ indices, int len){
-  simd_t sum = 0;
+  simd_t sum = 0.0;
   #pragma omp declare reduction(+:simd_t: omp_out = omp_out+omp_in) initializer(omp_priv = 0)
   #pragma omp parallel for reduction(+:sum) schedule(static)
   for(int i = 0; i < len; i+= simd_t::Width){

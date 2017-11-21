@@ -1,4 +1,4 @@
-//Compile with [clan,]g++ -march=native compute.cxx -o bin/compute
+//Compile with [clan,]g++ [-fopenmp] -march=native AoS.cxx -o bin/SoA
 //and your preffered optimization levels.
 // at the highest optimizations, and -ffast-math turned on, the scalar example
 // will also get vectorized. However, it has been my experience that this will
@@ -51,7 +51,7 @@ struct point_single{
 
 //A simple function that computes the lenght of 3d vectors.
 single_t vectorized_calculation(point_simd *p, int len){
-  simd_t sum = 0;
+  simd_t sum = 0.0;
   #pragma omp declare reduction(+:simd_t: omp_out = omp_out+omp_in) initializer(omp_priv = 0)
   #pragma omp parallel for reduction(+:sum) schedule(static)
   for(int i = 0; i < len; i++){

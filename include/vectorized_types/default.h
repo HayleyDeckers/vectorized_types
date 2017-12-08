@@ -194,57 +194,57 @@ inline vectorized_type abs() const{
 //basecase mathematical operators simply call std::function.
 //these can be specialized to support vectorized calls.
 template<typename T>
-inline auto sqrt(vectorized_type<T> val){
+auto sqrt(vectorized_type<T> val){
   return val.sqrt();
 }
 
 template<typename T>
-inline auto sqrt(T val){
+auto sqrt(T val){
   return std::sqrt(val);
 }
 
 template<typename T>
-inline auto log(vectorized_type<T> val){
+ auto log(vectorized_type<T> val){
   return val.log();
 }
 template<typename T>
-inline auto log(T val){
+ auto log(T val){
   return std::log(val);
 }
 
 template<typename T>
-inline auto sin(vectorized_type<T> val){
+ auto sin(vectorized_type<T> val){
   return val.sin();
 }
 template<typename T>
-inline auto sin(T val){
+ auto sin(T val){
   return std::sin(val);
 }
 
 template<typename T>
-inline auto cos(vectorized_type<T> val){
+ auto cos(vectorized_type<T> val){
   return val.cos();
 }
 template<typename T>
-inline auto cos(T val){
+ auto cos(T val){
   return std::cos(val);
 }
 
 template<typename T>
-inline auto tan(vectorized_type<T> val){
+ auto tan(vectorized_type<T> val){
   return val.tan();
 }
 template<typename T>
-inline auto tan(T val){
+ auto tan(T val){
   return std::tan(val);
 }
 
 template<typename T>
-inline auto pow(vectorized_type<T> base, vectorized_type<T> power){
+ auto pow(vectorized_type<T> base, vectorized_type<T> power){
   return base.pow(power);
 }
 template<typename T>
-inline auto pow(T val, T power){
+ auto pow(T val, T power){
   return std::pow(val, power);
 }
 

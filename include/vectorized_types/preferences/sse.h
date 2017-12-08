@@ -90,15 +90,15 @@ namespace vec{
 
   template<>
   inline vectorized_type<float> vectorized_type<float>::sin() const{
-    return internal::sin_ps(mVal);
+    return internal::sse::sin_ps(mVal);
   }
   template<>
   inline vectorized_type<float> vectorized_type<float>::cos() const{
-    return internal::cos_ps(mVal);
+    return internal::sse::cos_ps(mVal);
   }
   template<>
   inline vectorized_type<float> vectorized_type<float>::log() const{
-    return internal::log_ps(mVal);
+    return internal::sse::log_ps(mVal);
   }
 }
 #endif

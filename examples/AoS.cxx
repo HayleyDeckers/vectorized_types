@@ -6,7 +6,7 @@
 
 #include <cstddef>
 #include <cmath>
-#include "../vectorized_types.h"
+#include <vectorized_types.h>
 #include <vector>
 #include <random>
 #include <chrono>
@@ -52,7 +52,7 @@ struct point_single{
 //A simple function that computes the lenght of 3d vectors.
 single_t vectorized_calculation(point_simd *p, int len){
   simd_t sum = 0.0;
-  #pragma omp declare reduction(+:simd_t: omp_out = omp_out+omp_in) initializer(omp_priv = 0)
+  #pragma omp declare reduction(+:simd_t: omp_out = omp_out+omp_in) initializer(omp_priv = 0.0)
   #pragma omp parallel for reduction(+:sum) schedule(static)
   for(int i = 0; i < len; i++){
     sum += p[i].len();
@@ -73,7 +73,7 @@ single_t scalar_calculation(point_single *p, int len){
 int main(int arg, char** argv){
   const int width = simd_t::Width;
   std::cout << "using a vector width of " << width << std::endl;
-  const int n_simd_elements = 1*1000*1000;
+  const int n_simd_elements = 10*1000*1000;
   const int n_elements = width*n_simd_elements;
 
   auto points_simd = new point_simd[n_simd_elements];

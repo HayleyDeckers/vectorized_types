@@ -6,7 +6,7 @@
 
 #include <cstddef>
 #include <cmath>
-#include "../vectorized_types.h"
+#include <vectorized_types.h>
 #include <vector>
 #include <random>
 #include <chrono>
@@ -17,20 +17,20 @@
 using namespace std;
 using namespace std::chrono;
 using namespace vec;
-using single_t = double;
+using single_t = float;
 using simd_t = vectorized_type<single_t>;
 using index_t = int32_t;
 
 //A simple function that computes the lenght of 3d vectors.
 single_t vectorized_calculation(single_t *__restrict__ x, single_t *__restrict__ y, single_t *__restrict__ z, index_t *__restrict__ indices, int len){
   simd_t sum = 0.0;
-  #pragma omp declare reduction(+:simd_t: omp_out = omp_out+omp_in) initializer(omp_priv = 0)
+  #pragma omp declare reduction(+:simd_t: omp_out = omp_out+omp_in) initializer(omp_priv = 0.0)
   #pragma omp parallel for reduction(+:sum) schedule(static)
   for(int i = 0; i < len; i+= simd_t::Width){
     simd_t X = simd_t::Gather(x, indices+i);
     simd_t Y = simd_t::Gather(y, indices+i);
     simd_t Z = simd_t::Gather(z, indices+i);
-    sum += sqrt(X*X + Y*Y + Z*Z);
+    sum += cos(X*X + Y*Y + Z*Z);
     //without -ffast-math we should write
     // sum += sqrt((x[i]*x[i])+y[i]*y[i])+z[i]*z[i]));
     //in which case the compiler can produce fma instructions instead.
@@ -47,7 +47,7 @@ single_t scalar_calculation(single_t *__restrict__ x, single_t *__restrict__ y, 
     auto X = x[indices[i]];
     auto Y = y[indices[i]];
     auto Z = z[indices[i]];
-    sum += sqrt(X*X + Y*Y + Z*Z);
+    sum += cos(X*X + Y*Y + Z*Z);
   }
   return sum;
 }

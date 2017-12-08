@@ -85,15 +85,15 @@ inline vectorized_type<double> vectorized_type<double>::sqrt() const{
 
 template<>
 inline vectorized_type<float> vectorized_type<float>::sin() const{
-  return internal::sin256_ps(mVal);
+  return internal::avx::sin256_ps(mVal);
 }
 template<>
 inline vectorized_type<float> vectorized_type<float>::cos() const{
-  return internal::cos256_ps(mVal);
+  return internal::avx::cos256_ps(mVal);
 }
 template<>
 inline vectorized_type<float> vectorized_type<float>::log() const{
-  return internal::log256_ps(mVal);
+  return internal::avx::log256_ps(mVal);
 }
 
 #ifdef __AVX2__

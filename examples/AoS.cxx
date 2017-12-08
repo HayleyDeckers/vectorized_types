@@ -6,7 +6,7 @@
 
 #include <cstddef>
 #include <cmath>
-#include "../vectorized_type.h"
+#include "../vectorized_types.h"
 #include <vector>
 #include <random>
 #include <chrono>

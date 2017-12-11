@@ -40,7 +40,7 @@ public:
   }
   vectorized_type(Simd val) : mVal(val) {}
   template<typename I>
-  static vectorized_type Gather(T const* data, const I indices[Width]){
+  static vectorized_type gather(T const* data, const I indices[Width]){
     vectorized_type ret;
     static_assert(std::is_integral<I>::value, "Integral valued indices required");
     for(int i = 0; i < Width; i++){

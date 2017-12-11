@@ -99,12 +99,12 @@ inline vectorized_type<float> vectorized_type<float>::log() const{
 #ifdef __AVX2__
 
 template<> template<>
-inline vectorized_type<float> vectorized_type<float>::Gather<int32_t>(float const* data, const int32_t indices[8]){
+inline vectorized_type<float> vectorized_type<float>::gather<int32_t>(float const* data, const int32_t indices[8]){
   auto vindex = _mm256_loadu_si256((const __m256i*)indices);
   return _mm256_i32gather_ps(data, vindex, 4);
 }
 template<> template<>
-inline vectorized_type<float>  vectorized_type<float>::Gather<int64_t>(float const* data, const int64_t indices[8]){
+inline vectorized_type<float>  vectorized_type<float>::gather<int64_t>(float const* data, const int64_t indices[8]){
   auto vindex_1 = _mm256_loadu_si256((const __m256i*)indices);
   auto vindex_2 = _mm256_loadu_si256((const __m256i*)(indices+4));
   auto low = _mm256_i64gather_ps(data, vindex_1, 4);
@@ -113,12 +113,12 @@ inline vectorized_type<float>  vectorized_type<float>::Gather<int64_t>(float con
 }
 
 template<> template<>
-inline vectorized_type<double>  vectorized_type<double>::Gather<int32_t>(double const* data, const int32_t indices[4]){
+inline vectorized_type<double>  vectorized_type<double>::gather<int32_t>(double const* data, const int32_t indices[4]){
   auto vindex = _mm_loadu_si128((const __m128i*)indices);
   return _mm256_i32gather_pd(data, vindex, 8);
 }
 template<> template<>
-inline vectorized_type<double>  vectorized_type<double>::Gather<int64_t>(double const* data, const int64_t indices[4]){
+inline vectorized_type<double>  vectorized_type<double>::gather<int64_t>(double const* data, const int64_t indices[4]){
   auto vindex = _mm256_loadu_si256((const __m256i*)indices);
   return _mm256_i64gather_pd(data, vindex, 8);
 }

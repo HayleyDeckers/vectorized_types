@@ -57,12 +57,10 @@ struct preffered_vector_type<double>{
 };
 
 template<>
-inline vectorized_type<float>::vectorized_type(const float* val){
-  mVal = _mm256_loadu_ps(val);
+inline vectorized_type<float>::vectorized_type(const float* val) : mVal(_mm256_loadu_ps(val)){
 }
 template<>
-inline vectorized_type<double>::vectorized_type(const double* val){
-  mVal = _mm256_loadu_pd(val);
+inline vectorized_type<double>::vectorized_type(const double* val) : mVal(_mm256_loadu_pd(val)){
 }
 
 template<>
@@ -72,6 +70,17 @@ inline void vectorized_type<float>::set_1(float val){
 template<>
 inline void vectorized_type<double>::set_1(double val){
   mVal = _mm256_set1_pd(val);
+}
+
+template<>
+inline vectorized_type<float> vectorized_type<float>::abs() const{
+  static const __m256 SIGNMASK = (__m256)_mm256_set1_epi32(0x80000000);
+  return _mm256_andnot_ps(SIGNMASK, mVal); // absval = abs(val)
+}
+template<>
+inline vectorized_type<double> vectorized_type<double>::abs() const{
+  static const __m256d SIGNMASK = (__m256d)_mm256_set1_epi64x(1ul<<63);
+  return _mm256_andnot_pd(SIGNMASK, mVal); // absval = abs(val)
 }
 
 template<>
@@ -95,6 +104,10 @@ template<>
 inline vectorized_type<float> vectorized_type<float>::log() const{
   return internal::avx::log256_ps(mVal);
 }
+template<>
+inline vectorized_type<float> vectorized_type<float>::exp() const{
+  return internal::avx::exp256_ps(mVal);
+}
 
 #ifdef __AVX2__
 
@@ -103,6 +116,13 @@ inline vectorized_type<float> vectorized_type<float>::gather<int32_t>(float cons
   auto vindex = _mm256_loadu_si256((const __m256i*)indices);
   return _mm256_i32gather_ps(data, vindex, 4);
 }
+template<> template<>
+inline vectorized_type<float> vectorized_type<float>::gather_stride<int32_t>(float const* data, const int32_t indices[8], int32_t stride){
+  auto vindex = _mm256_loadu_si256((const __m256i*)indices);
+  vindex = _mm256_mul_epi32(vindex,_mm256_set1_epi32(stride));
+  return _mm256_i32gather_ps(data, vindex, 4);
+}
+
 template<> template<>
 inline vectorized_type<float>  vectorized_type<float>::gather<int64_t>(float const* data, const int64_t indices[8]){
   auto vindex_1 = _mm256_loadu_si256((const __m256i*)indices);

@@ -24,14 +24,14 @@ public:
     //How many elements the SIMD element has
     static constexpr int Width = preffered_vector_type<T>::width;
 
-  inline Simd inner(){return mVal;}
+  constexpr inline Simd inner(){return mVal;}
 
   inline void set_1(T val){
     for(int i = 0; i < Width; i++){
         mVal[i] = val;
     }
   }
-  vectorized_type() {}
+  constexpr vectorized_type() {}
   vectorized_type(T val) {set_1(val);}
   vectorized_type(const T* val) {
     for(int i =0; i < Width; i++){
@@ -40,7 +40,7 @@ public:
   }
   vectorized_type(Simd val) : mVal(val) {}
   template<typename I>
-  static vectorized_type gather(T const* data, const I indices[Width]){
+  constexpr static vectorized_type gather(T const* data, const I indices[Width]){
     vectorized_type ret;
     static_assert(std::is_integral<I>::value, "Integral valued indices required");
     for(int i = 0; i < Width; i++){
@@ -48,11 +48,20 @@ public:
     }
     return ret;
   }
-  void set(int index, T val){ mVal[index] = val;}
+  template<typename I>
+  constexpr static vectorized_type gather_stride(T const* data, const I indices[Width], I stride){
+    vectorized_type ret;
+    static_assert(std::is_integral<I>::value, "Integral valued indices required");
+    for(int i = 0; i < Width; i++){
+     ret.set(i, data[indices[i]*stride]);
+    }
+    return ret;
+  }
+  constexpr void set(int index, T val){ mVal[index] = val;}
   //array indexing
-  const T operator[](std::size_t i) const {return mVal[i];}
+  constexpr const T operator[](std::size_t i) const {return mVal[i];}
   // T& operator[](std::size_t i){return mVal[i];}
-  static void* operator new(std::size_t sz) {
+  constexpr static void* operator new(std::size_t sz) {
    void *p = aligned_alloc(alignof(Simd), sz);
    if(!p){
      throw std::bad_alloc();
@@ -173,6 +182,13 @@ inline vectorized_type tan() const{
   }
   return ret;
 }
+inline vectorized_type exp() const{
+  vectorized_type ret;
+  for(int i = 0; i < Width; i++){
+    ret.set(i, std::exp(mVal[i]));
+  }
+  return ret;
+}
 inline vectorized_type pow(const vectorized_type& power) const{
   vectorized_type ret;
   for(int i = 0; i < Width; i++){
@@ -240,6 +256,24 @@ template<typename T>
 }
 
 template<typename T>
+ auto exp(vectorized_type<T> val){
+  return val.exp();
+}
+template<typename T>
+ auto exp(T val){
+  return std::exp(val);
+}
+
+template<typename T>
+ auto abs(vectorized_type<T> val){
+  return val.abs();
+}
+template<typename T>
+ auto abs(T val){
+  return std::abs(val);
+}
+
+template<typename T>
  auto pow(vectorized_type<T> base, vectorized_type<T> power){
   return base.pow(power);
 }
@@ -247,6 +281,7 @@ template<typename T>
  auto pow(T val, T power){
   return std::pow(val, power);
 }
+
 
 }
 

@@ -34,8 +34,13 @@ namespace vec{
 namespace internal{
 namespace avx2{
 /* yes I know, the top of this file is quite ugly */
+#ifdef _MSC_VER
+# define ALIGN32_BEG __declspec(align(32))
+# define ALIGN32_END
+#else
 # define ALIGN32_BEG
 # define ALIGN32_END __attribute__((aligned(32)))
+#endif
 
 #define _PI32AVX_CONST(Name, Val)                                            \
   static const ALIGN32_BEG int _pi32avx_##Name[4] ALIGN32_END = { Val, Val, Val, Val }

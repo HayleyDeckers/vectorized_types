@@ -61,8 +61,12 @@ public:
   //array indexing
   constexpr const T operator[](std::size_t i) const {return mVal[i];}
   // T& operator[](std::size_t i){return mVal[i];}
-  constexpr static void* operator new(std::size_t sz) {
+  static void* operator new(std::size_t sz) {
+#ifdef _MSC_VER
+   void *p = _aligned_malloc(sz, alignof(Simd));
+#else
    void *p = aligned_alloc(alignof(Simd), sz);
+#endif
    if(!p){
      throw std::bad_alloc();
    }
@@ -72,7 +76,11 @@ public:
    return vectorized_type::operator new(sz);
   }
   void operator delete(void *p) {
+#ifdef _MSC_VER
+   _aligned_free(p);
+#else
    free(p);
+#endif
   }
   void operator delete[](void *p) {
    vectorized_type::operator delete(p);
